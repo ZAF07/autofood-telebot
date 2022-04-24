@@ -1,7 +1,7 @@
 
 import {} from 'dotenv/config';
 import initRestaurantRepository from './repository/index.mjs';
-import generateRandomMessage from './utils/pkg/randomMessages.mjs';
+import { generateRandomMessage, sendRestaurantOptions } from './utils/helper/index.mjs';
 import { Telegraf } from 'telegraf';
 
 const bot = new Telegraf(process.env.BOT_TOKEN);
@@ -14,23 +14,21 @@ bot.command('start', ctx => {
     })
 })
 
-// RECEIVES AN ARRAY AND SENDS EACH ELEMENT AS A MESSAGE TO TELEGRAM
-const sendRestaurantOptions = (ctx, restaurants) => {
-  restaurants.forEach(restaurant => {
-    bot.telegram.sendMessage(ctx.chat.id, `${restaurant} \n`, {
-    })
-  });
-}
-
 // GET ENTRIES FROM THE EAST
 bot.command('east', ctx => {
-  console.log(ctx.message)
-  db.getRestaurants('east');
-    bot.telegram.sendMessage(ctx.chat.id, `Ok! Lets see what the east has in store for us! 😬`, {
-    })
-    console.log(ctx.from)
-    sendFoodOptions(ctx)
-})
+  bot.telegram.sendMessage(ctx.chat.id, `Ok! Lets see what the east has in store for us! 😬`, {
+  })
+  console.log(ctx.from)
+
+  db.getRestaurants('east')
+    .then(restaurants => {
+      if (restaurants.length < 1) {
+        bot.telegram.sendMessage(ctx.chat.id, 'Nothing found sorry 🙁', {})
+        return
+      }
+      sendRestaurantOptions(ctx, bot, restaurants);
+    });
+});
 
 // GET ENTRIES FROM THE WEST
 bot.command('west', ctx => {
@@ -45,7 +43,7 @@ bot.command('west', ctx => {
       restaurants.forEach(restaurant => {
         listOfRestaurants.push(restaurant.url)
       });
-      sendRestaurantOptions(ctx, listOfRestaurants)
+      sendRestaurantOptions(ctx, bot, listOfRestaurants)
     })
 })
 

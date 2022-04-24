@@ -1,5 +1,14 @@
 import { westMessages, eastMessages } from '../enums/index.mjs';
 
+// RECEIVES AN ARRAY AND SENDS EACH ELEMENT AS A MESSAGE TO TELEGRAM
+const sendRestaurantOptions = (ctx, bot, restaurants) => {
+  restaurants.forEach(restaurant => {
+    bot.telegram.sendMessage(ctx.chat.id, `${restaurant} \n`, {
+    })
+  });
+}
+
+
 const generateRandomMessage = (location) => {
   switch (location) {
     case 'west':
@@ -10,7 +19,9 @@ const generateRandomMessage = (location) => {
     default:
       return 'Let me see ...'
   }
-  // arr[Math.floor(Math.random() * arr.length)];
 };
 
-export default generateRandomMessage;
+export {
+  generateRandomMessage, 
+  sendRestaurantOptions
+};
