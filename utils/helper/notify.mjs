@@ -10,7 +10,7 @@ const sendRestaurantOptions = (ctx, bot, restaurants) => {
 
 
 const generateRandomMessage = (ctxChatID, bot, district) => {
-  let message = '';
+  let message
   switch (district) {
     case 'west':
       message = westMessages[Math.floor(Math.random() * westMessages.length)]
