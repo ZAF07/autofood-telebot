@@ -1,27 +1,13 @@
-import { westMessages, eastMessages } from '../enums/index.mjs';
+import initNotifiers from './notify.mjs';
+import initErrorMessages from './errors.mjs'; 
+import initValidators from './validate.mjs';
 
-// RECEIVES AN ARRAY AND SENDS EACH ELEMENT AS A MESSAGE TO TELEGRAM
-const sendRestaurantOptions = (ctx, bot, restaurants) => {
-  restaurants.forEach(restaurant => {
-    bot.telegram.sendMessage(ctx.chat.id, `${restaurant} \n`, {
-    })
-  });
+const initHelpers = () => {
+ return {
+   validators: initValidators(),
+   errorMsgGenerator: initErrorMessages(),
+   notifiers: initNotifiers(),
+  }
 }
 
-
-const generateRandomMessage = (location) => {
-  switch (location) {
-    case 'west':
-      return westMessages[Math.floor(Math.random() * westMessages.length)]
-
-    case 'east':
-       return eastMessages[Math.floor(Math.random() * eastMessages.length)]
-    default:
-      return 'Let me see ...'
-  }
-};
-
-export {
-  generateRandomMessage, 
-  sendRestaurantOptions
-};
+export default initHelpers;

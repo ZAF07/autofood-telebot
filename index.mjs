@@ -1,49 +1,22 @@
-
 import {} from 'dotenv/config';
-import initRestaurantRepository from './repository/index.mjs';
-import { generateRandomMessage, sendRestaurantOptions } from './utils/helper/index.mjs';
 import { Telegraf } from 'telegraf';
+import { districts } from './utils/enums/index.mjs';
+import initRestaurantRepository from './repository/index.mjs';
+import initHelpers from './utils/helper/index.mjs';
+
 
 const bot = new Telegraf(process.env.BOT_TOKEN);
 const db =initRestaurantRepository();
+const helpers = initHelpers();
+
+const notify = helpers.notifiers;
+const err = helpers.errorMsgGenerator;
+const validator = helpers.validators;
 
 // STARTS THE BOT, SENDS A WELCOME MESSAGE
 bot.command('start', ctx => {
     console.log(ctx.from)
     bot.telegram.sendMessage(ctx.chat.id, 'Hello you must be Darla🙎‍♀️, Darlo🙍‍♂️ or Poopoo💩 ! Hungry and undecided about where to eat? Send me your location and i will tell you your options!', {
-    })
-})
-
-// GET ENTRIES FROM THE EAST
-bot.command('east', ctx => {
-  bot.telegram.sendMessage(ctx.chat.id, `Ok! Lets see what the east has in store for us! 😬`, {
-  })
-  console.log(ctx.from)
-
-  db.getRestaurants('east')
-    .then(restaurants => {
-      if (restaurants.length < 1) {
-        bot.telegram.sendMessage(ctx.chat.id, 'Nothing found sorry 🙁', {})
-        return
-      }
-      sendRestaurantOptions(ctx, bot, restaurants);
-    });
-});
-
-// GET ENTRIES FROM THE WEST
-bot.command('west', ctx => {
-  const listOfRestaurants = []
-  const message = generateRandomMessage('west');
-  bot.telegram.sendMessage(ctx.chat.id, message, {
-  })
-  console.log(ctx.from)
-  //  Retrieve restaurants and call sendFoodOptions()
-  db.getRestaurants('west')
-    .then(restaurants => {
-      restaurants.forEach(restaurant => {
-        listOfRestaurants.push(restaurant.url)
-      });
-      sendRestaurantOptions(ctx, bot, listOfRestaurants)
     })
 })
 
@@ -54,5 +27,32 @@ bot.command('save', ctx => {
   db.saveNewRestaurant(url, location);
   bot.telegram.sendMessage(ctx.chat.id, `Done! Saved!`)
 })
+
+// GET ENTRIES FROM DISTRICT GIVEN
+bot.command(districts, async  ctx => {
+  const district = ctx.update.message.text.split('/')[1];
+  console.log(district);
+  const isDistrictValid = validator.checkValidDistrict(district, districts);
+  if (!isDistrictValid) err.errorInvalidDistrict(ctx.chat.id, bot);
+
+  fetchRestaurantsInDistrict(ctx, bot, district);
+})
+
+const fetchRestaurantsInDistrict = async (ctx, bot, district) => {
+    notify.generateRandomMessage(ctx.chat.id, bot, district);
+    console.log(ctx.from)
+    //  Retrieve restaurants and call sendFoodOptions()
+    const restaurants = await db.getRestaurants(district)
+    const receivedRestaurantLists = validator.checkRestaurantsReceived(restaurants);
+    if (!receivedRestaurantLists) err.errorNoRestaurantsFound(ctx.chat.id, bot);
+    
+    const listOfRestaurants = []
+    restaurants.forEach(restaurant => {
+      listOfRestaurants.push(restaurant.url)
+    })
+
+    notify.sendRestaurantOptions(ctx, bot, listOfRestaurants)
+    return
+}
 
 bot.launch();

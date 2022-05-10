@@ -1,3 +1,5 @@
+import errorMessages from "./errors.mjs";
+
 const westMessages = [
   `Awesome! let\'s see what we have in the west!`,
   'Hmm... Let me take a look 🕵️‍♂️',
@@ -12,7 +14,12 @@ const eastMessages = [
   `Ok! Lets see what the west has in store for us! 😬`
 ];
 
+
+const districts = ['south', 'South', 'SOUTH', 'north', 'North', 'NORTH', 'west', 'West', 'WEST', 'east', 'East', 'EAST', 'central', 'Central', 'CENTRAL'];
+
 export {
    westMessages,
-   eastMessages
+   eastMessages,
+   districts, 
+   errorMessages
   };
