@@ -1,4 +1,5 @@
 import errorMessages from "./errors.mjs";
+import { START_MSG, HELP_MSG, END_MSG } from "./messages.mjs";
 
 const westMessages = [
   `Awesome! let\'s see what we have in the west!`,
@@ -21,5 +22,8 @@ export {
    westMessages,
    eastMessages,
    districts, 
-   errorMessages
+   errorMessages,
+   START_MSG,
+   HELP_MSG,
+   END_MSG
   };

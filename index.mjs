@@ -16,14 +16,11 @@ const validator = helpers.validators;
 // STARTS THE BOT, SENDS A WELCOME MESSAGE
 bot.command('start', ctx => {
     console.log(ctx.from)
-    bot.telegram.sendMessage(ctx.chat.id, 'Hello you must be Darla🙎‍♀️, Darlo🙍‍♂️ or Poopoo💩 ! Hungry and undecided about where to eat? Send me your location and i will tell you your options! \n\nEnter "/help" for more information on how to use me!', {
-    })
+    notify.sendStartMessage(ctx.chat.id, bot);
 })
 
 bot.command('help', ctx => {
-  bot.telegram.sendMessage(ctx.chat.id, `TO ADD A NEW RESTAURANT, ENTER:\n - "/add (district) (RESTAURANT_URL)"\n - EXAMPLE: "/add west www.restaurant.com"\n\n
-  TO VIEW RESTAURANTS YOU'VE SAVED, ENTER:\n - "/(district)"\n - EXAMPLE: "/west"
-  `)
+  notify.sendHelpMessage(ctx.chat.id, bot)
 })
 
 // SAVING A NEW ENTRY TO DB
@@ -34,7 +31,7 @@ bot.command('add', ctx => {
   bot.telegram.sendMessage(ctx.chat.id, `Done! Saved!`)
 })
 
-// GET ENTRIES FROM DISTRICT GIVEN
+// GET RESTAURANTS FROM DISTRICT GIVEN
 bot.command(districts, async  ctx => {
   const district = ctx.update.message.text.split('/')[1];
   console.log(district);
@@ -47,7 +44,7 @@ bot.command(districts, async  ctx => {
 const fetchRestaurantsInDistrict = async (ctx, bot, district) => {
     notify.generateRandomMessage(ctx.chat.id, bot, district);
     console.log(ctx.from)
-    //  Retrieve restaurants and call sendFoodOptions()
+
     const restaurants = await db.getRestaurants(district)
     const receivedRestaurantLists = validator.checkRestaurantsReceived(restaurants);
     if (!receivedRestaurantLists) err.errorNoRestaurantsFound(ctx.chat.id, bot);
@@ -58,7 +55,8 @@ const fetchRestaurantsInDistrict = async (ctx, bot, district) => {
     })
 
     notify.sendRestaurantOptions(ctx, bot, listOfRestaurants)
-    bot.telegram.sendMessage(ctx.chat.id, "Here you go!")
+    // bot.telegram.sendMessage(ctx.chat.id, "Here you go!")
+    notify.sendEndMessage(ctx.chat.id, bot);
     return
 }
 
