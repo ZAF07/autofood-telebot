@@ -16,12 +16,18 @@ const validator = helpers.validators;
 // STARTS THE BOT, SENDS A WELCOME MESSAGE
 bot.command('start', ctx => {
     console.log(ctx.from)
-    bot.telegram.sendMessage(ctx.chat.id, 'Hello you must be Darla🙎‍♀️, Darlo🙍‍♂️ or Poopoo💩 ! Hungry and undecided about where to eat? Send me your location and i will tell you your options!', {
+    bot.telegram.sendMessage(ctx.chat.id, 'Hello you must be Darla🙎‍♀️, Darlo🙍‍♂️ or Poopoo💩 ! Hungry and undecided about where to eat? Send me your location and i will tell you your options! \n\nEnter "/help" for more information on how to use me!', {
     })
 })
 
+bot.command('help', ctx => {
+  bot.telegram.sendMessage(ctx.chat.id, `TO ADD A NEW RESTAURANT, ENTER:\n - "/add (district) (RESTAURANT_URL)"\n - EXAMPLE: "/add west www.restaurant.com"\n\n
+  TO VIEW RESTAURANTS YOU'VE SAVED, ENTER:\n - "/(district)"\n - EXAMPLE: "/west"
+  `)
+})
+
 // SAVING A NEW ENTRY TO DB
-bot.command('save', ctx => {
+bot.command('add', ctx => {
   const location = ctx.message.text.split(' ')[1];
   const url = ctx.message.text.split(' ')[2];
   db.saveNewRestaurant(url, location);
@@ -52,6 +58,7 @@ const fetchRestaurantsInDistrict = async (ctx, bot, district) => {
     })
 
     notify.sendRestaurantOptions(ctx, bot, listOfRestaurants)
+    bot.telegram.sendMessage(ctx.chat.id, "Here you go!")
     return
 }
 
