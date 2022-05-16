@@ -6,7 +6,7 @@ import initHelpers from './utils/helper/index.mjs';
 
 
 const bot = new Telegraf(process.env.BOT_TOKEN);
-const db =initRestaurantRepository();
+const db = initRestaurantRepository();
 const helpers = initHelpers();
 
 const notify = helpers.notifiers;
@@ -42,22 +42,22 @@ bot.command(districts, async  ctx => {
 })
 
 const fetchRestaurantsInDistrict = async (ctx, bot, district) => {
-    notify.generateRandomMessage(ctx.chat.id, bot, district);
-    console.log(ctx.from)
+  notify.generateRandomMessage(ctx.chat.id, bot, district);
+  console.log(ctx.from)
 
-    const restaurants = await db.getRestaurants(district)
-    const receivedRestaurantLists = validator.checkRestaurantsReceived(restaurants);
-    if (!receivedRestaurantLists) err.errorNoRestaurantsFound(ctx.chat.id, bot);
+  const restaurants = await db.getRestaurants(district)
+  const receivedRestaurantLists = validator.checkRestaurantsReceived(restaurants);
+  if (!receivedRestaurantLists) err.errorNoRestaurantsFound(ctx.chat.id, bot);
     
-    const listOfRestaurants = []
-    restaurants.forEach(restaurant => {
-      listOfRestaurants.push(restaurant.url)
-    })
+  const listOfRestaurants = []
+  restaurants.forEach(restaurant => {
+    listOfRestaurants.push(restaurant.url)
+  })
 
-    notify.sendRestaurantOptions(ctx, bot, listOfRestaurants)
-    // bot.telegram.sendMessage(ctx.chat.id, "Here you go!")
-    notify.sendEndMessage(ctx.chat.id, bot);
-    return
+  notify.sendRestaurantOptions(ctx, bot, listOfRestaurants)
+  // bot.telegram.sendMessage(ctx.chat.id, "Here you go!")
+  notify.sendEndMessage(ctx.chat.id, bot);
+  return
 }
 
 bot.launch();
