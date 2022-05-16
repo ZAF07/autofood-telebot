@@ -40,7 +40,7 @@ bot.command('add', ctx => {
 
 // GET RESTAURANTS FROM DISTRICT GIVEN
 bot.command(districts, async  ctx => {
-  const district = ctx.update.message.text.split('/')[1];
+  const district = ctx.update.message.text.split('/')[1].toLowerCase();
   console.log(district);
   const isDistrictValid = validator.checkValidDistrict(district, districts);
   if (!isDistrictValid) err.errorInvalidDistrict(ctx.chat.id, bot);
