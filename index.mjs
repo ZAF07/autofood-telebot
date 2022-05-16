@@ -54,7 +54,10 @@ const fetchRestaurantsInDistrict = async (ctx, bot, district) => {
 
   const restaurants = await db.getRestaurants(district)
   const receivedRestaurantLists = validator.checkRestaurantsReceived(restaurants);
-  if (!receivedRestaurantLists) return err.errorNoRestaurantsFound(ctx.chat.id, bot);
+  if (!receivedRestaurantLists) {
+    err.errorNoRestaurantsFound(ctx.chat.id, bot);
+    return
+  } 
     
   const listOfRestaurants = []
   restaurants.forEach(restaurant => {
