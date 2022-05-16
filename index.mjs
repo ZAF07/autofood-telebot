@@ -6,7 +6,7 @@ import initRestaurantRepository from './repository/index.mjs';
 import initHelpers from './utils/helper/index.mjs';
 
 const app = express();
-var server = app.listen(process.env.PORT, "0.0.0.0", () => {
+const server = app.listen(process.env.PORT, "0.0.0.0", () => {
   const host = server.address().address;
   const port = server.address().port;
   console.log('Web server started at http://%s:%s', host, port);
@@ -54,7 +54,7 @@ const fetchRestaurantsInDistrict = async (ctx, bot, district) => {
 
   const restaurants = await db.getRestaurants(district)
   const receivedRestaurantLists = validator.checkRestaurantsReceived(restaurants);
-  if (!receivedRestaurantLists) err.errorNoRestaurantsFound(ctx.chat.id, bot);
+  if (!receivedRestaurantLists) return err.errorNoRestaurantsFound(ctx.chat.id, bot);
     
   const listOfRestaurants = []
   restaurants.forEach(restaurant => {
