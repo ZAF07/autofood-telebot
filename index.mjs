@@ -1,5 +1,5 @@
 import {} from 'dotenv/config';
-import {express} from 'express';
+import express from 'express';
 import { Telegraf } from 'telegraf';
 import { districts } from './utils/enums/index.mjs';
 import initRestaurantRepository from './repository/index.mjs';
