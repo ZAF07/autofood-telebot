@@ -1,9 +1,16 @@
 import {} from 'dotenv/config';
+import {express} from 'express';
 import { Telegraf } from 'telegraf';
 import { districts } from './utils/enums/index.mjs';
 import initRestaurantRepository from './repository/index.mjs';
 import initHelpers from './utils/helper/index.mjs';
 
+const app = express();
+var server = app.listen(process.env.PORT, "0.0.0.0", () => {
+  const host = server.address().address;
+  const port = server.address().port;
+  console.log('Web server started at http://%s:%s', host, port);
+});
 
 const bot = new Telegraf(process.env.BOT_TOKEN);
 const db = initRestaurantRepository();
