@@ -32,7 +32,7 @@ bot.command('help', ctx => {
 
 // SAVING A NEW ENTRY TO DB
 bot.command('add', ctx => {
-  const location = ctx.message.text.split(' ')[1];
+  const location = ctx.message.text.split(' ')[1].toLowerCase();
   const url = ctx.message.text.split(' ')[2];
   db.saveNewRestaurant(url, location);
   bot.telegram.sendMessage(ctx.chat.id, `Done! Saved!`)
